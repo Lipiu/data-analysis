@@ -10,7 +10,7 @@ screen_time_by_age = df.groupby('Age')['Screen On Time (hours/day)'].mean()
 
 ages = screen_time_by_age.index
 values = screen_time_by_age.values
-top_values = 3
+top_values = 3 # number of top values to be displayed
 threshold = np.sort(values)[-top_values]
 plt.figure(figsize=(10, 5))
 
