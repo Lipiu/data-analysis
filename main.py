@@ -45,19 +45,12 @@ for age, value in zip(ages,values):
 #---------------------------------------------------------------#
 
 # How fast battery drains for each Phone model (and Operating System)
-# raw battery usage, independent of usage
+
 battery_by_os_model = (
     df.groupby(['Device Model', 'Operating System'])['Battery Drain (mAh/day)']
       .mean()
       .sort_values(ascending=False)
 )
-# battery_by_os_model.plot(kind='bar', figsize=(10, 5))
-# plt.ylabel('Battery Drain (mAh/day) - Lower is better')
-# plt.title('Average Battery Drain by Device Model and Operating System')
-# plt.xticks(rotation=45, ha='right')
-# plt.tight_layout()
-# plt.show()
-
 
 # compare OS and model battery performance while using apps
 app_usage_threshold = df['App Usage Time (min/day)'].median()
