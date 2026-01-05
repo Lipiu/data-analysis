@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
 
 df = pd.read_csv('dataset/user_behavior_dataset.csv')
 
@@ -79,5 +82,34 @@ compare_df.plot(kind='bar', figsize=(14,6))
 plt.ylabel('Battery Drain (mAh/day)')
 plt.title('Battery Drain by OS and Model (high vs low app usage)')
 plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+
+# Select behavioral features
+features = df[[
+    'Number of Apps Installed',
+    'Data Usage (MB/day)',
+    'Screen On Time (hours/day)',
+    'Battery Drain (mAh/day)'
+]].dropna()
+
+# Standardize features
+scaled_features = StandardScaler().fit_transform(features)
+
+# Perform hierarchical clustering using Ward's method
+linked = linkage(scaled_features, method='ward')
+
+# Plot dendrogram
+plt.figure(figsize=(12, 6))
+dendrogram(
+    linked,
+    truncate_mode='lastp',
+    p=10,
+    show_leaf_counts=True
+)
+plt.title('Hierarchical Clustering of User Behavior Patterns')
+plt.xlabel('Users')
+plt.ylabel('Euclidean Distance')
 plt.tight_layout()
 plt.show()
