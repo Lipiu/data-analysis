@@ -60,11 +60,31 @@ battery_by_os_model = (
 
 
 # compare OS and model battery performance while using apps
-df['Battery drain per minute'] = df['Battery Drain (mAh/day)'] / df['App Usage Time (min/day)']
-drain_by_model_os = df.groupby(['Device Model', 'Operating System'])['Battery drain per minute'].mean()
-# drain_by_model_os.plot(kind='bar', figsize=(12, 6))
-# plt.ylabel('Battery Drain (mAh per minute of app usage)')
-# plt.title('Battery Drain While Using Apps by Device Model and OS')
-# plt.xticks(rotation=45, ha='right')
-# plt.tight_layout()
-# plt.show()
+app_usage_threshold = df['App Usage Time (min/day)'].median()
+using_apps = df[df['App Usage Time (min/day)'] > app_usage_threshold]
+battery_using_apps_by_os_and_model = (
+    using_apps
+    .groupby(['Device Model', 'Operating System'])['Battery Drain (mAh/day)']
+    .mean()
+    .sort_values(ascending=False)
+)
+
+low_app_users = df[df['App Usage Time (min/day)'] <= app_usage_threshold]
+battery_low = (
+    low_app_users.groupby(['Device Model', 'Operating System'])['Battery Drain (mAh/day)'].mean()
+)
+
+battery_high = battery_using_apps_by_os_and_model
+
+compare_df = pd.concat(
+    [battery_low, battery_high],
+    axis=1,
+    keys=['Low App Usage', 'High App Usage']
+)
+
+compare_df.plot(kind='bar', figsize=(14,6))
+plt.ylabel('Battery Drain (mAh/day)')
+plt.title('Battery Drain by OS and Model (high vs low app usage)')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
